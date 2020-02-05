@@ -1,0 +1,39 @@
+.react-appconsole-alertBar {
+  padding: 0.25rem 0.5rem;
+  padding-left: 1rem;
+  margin-left: -0.5rem;
+  font-size: 0.75rem;
+  width: max-content;
+  height: max-content;
+  box-shadow: 6px 3px 6px 0px #0008;
+  border-top-left-radius: 11.5px;
+  border-bottom-right-radius: 11.5px;
+  font-family: Nokia Pure Text Regular, Arial, sans-serif;
+}
+
+.react-appconsole-alertBar:last-child {
+  padding-left: 0.5rem;
+  margin-left: 0;
+}
+
+.react-appconsole-alertBarActions {
+  display: inline-flex;
+  flex-direction: row;
+}
+
+.react-appconsole-alertBarAction:first-child::before {
+  content: "•";
+  margin-left: 0.25em;
+  margin-right: 0.25em;
+}
+
+.react-appconsole-alertBarAction::after {
+  content: "•";
+  margin-left: 0.25em;
+  margin-right: 0.25em;
+}
+
+.react-appconsole-alertBarAction {
+  font-weight: bold;
+  cursor: pointer;
+}

@@ -1,0 +1,138 @@
+.react-appconsole-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  margin: 0.5rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.react-appconsole-appConsoleToggle {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-end;
+  margin-right: 0.25rem;
+}
+
+.react-appconsole-alertBarStack {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-end;
+  flex-wrap: wrap-reverse;
+  justify-content: flex-end;
+}
+
+.react-appconsole-alertBarContainer {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: flex-end;
+  margin-top: 0.5rem;
+}
+
+.react-appconsole-tabbedConsole {
+  width: calc(100vw - 1rem);
+  background-color: #fff;
+  box-shadow: 6px 3px 6px 0px #0008;
+  border: 1px solid #e0e0e0;
+  display: none;
+}
+
+.react-appconsole-consoleLogContainer {
+  height: 75vh;
+  max-height: 75vh;
+  display: flex !important;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.react-appconsole-consoleLogTabPanel {
+  display: none;
+}
+
+.react-appconsole-consoleLogTabPanelActive {
+  display: unset;
+}
+
+.react-appconsole-consoleLogTab {
+  list-style-type: none;
+  font-size: 0.75rem;
+  font-family: Nokia Pure Text Medium, Arial, sans-serif;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding-top: 0.5rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-bottom: 0.25rem;
+  cursor: pointer;
+  position: relative;
+}
+
+.react-appconsole-consoleLogTabActive {
+  border-bottom: 0.2rem solid #124191;
+  color: #124191;
+}
+
+.react-appconsole-consoleLogTabModified {
+  position: absolute;
+  right: 0px;
+  width: 1.5rem;
+  text-align: left;
+}
+
+.react-appconsole-consoleLogContent {
+  overflow-y: auto;
+}
+
+.react-appconsole-consoleLogTabsList {
+  display: flex;
+  flex-direction: row;
+  margin: 0px;
+  margin-bottom: 0.15rem;
+  padding: 0px;
+}
+
+.react-appconsole-consoleEntry {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  font-family: Consolas, Lucida Console, monospace;
+  font-size: 0.75rem;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+}
+
+.react-appconsole-consoleEntryPart {
+  padding-left: 0.25rem;
+}
+
+.react-appconsole-consoleEntryTimestamp {
+  color: #757575;
+}
+
+.react-appconsole-consoleEntryMessage {
+  white-space: pre-wrap;
+}
+
+.react-appconsole-shake {
+  animation: 0.3s ease react-appconsole-shake;
+}
+
+@keyframes react-appconsole-shake {
+  0% {
+    rotate: 0deg;
+  }
+  20% {
+    rotate: 30deg;
+  }
+  40% {
+    rotate: -30deg;
+  }
+  80% {
+    rotate: 30deg;
+  }
+  100% {
+    rotate: 0deg;
+  }
+}
