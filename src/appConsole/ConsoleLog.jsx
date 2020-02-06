@@ -6,36 +6,39 @@ import { faInfo, faExclamationTriangle, faTimesCircle, faChevronRight, faChevron
 export default class ConsoleLog extends React.Component {
   constructor (props) {
     super(props)
-    this.state = {
-      entries: []
-    }
+    this.entries = []
   }
 
   static propTypes = {
     logId: PropTypes.string.isRequired,
-    logModified: PropTypes.func
+    logModified: PropTypes.func,
+    entryFilter: PropTypes.array.isRequired,
+    filterSearchText: PropTypes.string
   }
 
   static LogEntry = (props) => {
-    return (
-      <div className='react-appconsole-consoleEntry' style={{
-        backgroundColor: props.level === 'error' ? '#d9070a08' : props.level === 'warning' ? '#ffbf0208' : null
-      }}>
-        <div className='react-appconsole-consoleEntryPart react-appconsole-consoleEntryTimestamp'>{props.timestamp}</div>
-        <div className='react-appconsole-consoleEntryPart react-appconsole-consoleEntryLevelDirection'>
-          {
-            props.level === 'error' ? <FontAwesomeIcon icon={faTimesCircle} fixedWidth color='#d9070a' />
-              : props.level === 'warning' ? <FontAwesomeIcon icon={faExclamationTriangle} fixedWidth color='#ffbf02' />
-                : <FontAwesomeIcon icon={faInfo} fixedWidth color='#124191' />
-          }
-          {
-            props.direction === 'out' ? <FontAwesomeIcon icon={faChevronLeft} fixedWidth />
-              : <FontAwesomeIcon icon={faChevronRight} fixedWidth />
-          }
-        </div>
-        <div className='react-appconsole-consoleEntryPart react-appconsole-consoleEntryMessage'>{props.message}</div>
-      </div >
-    )
+    return props.entryFilter.includes(props.level) && props.entryFilter.includes(props.direction) &&
+      (props.message.includes(props.filterSearchText || '') || props.timestamp.includes(props.filterSearchText || ''))
+      ? (
+        <div className='react-appconsole-consoleEntry' style={{
+          backgroundColor: props.level === 'error' ? '#d9070a08' : props.level === 'warning' ? '#ffbf0208' : null
+        }}>
+          <div className='react-appconsole-consoleEntryPart react-appconsole-consoleEntryTimestamp'>{props.timestamp}</div>
+          <div className='react-appconsole-consoleEntryPart react-appconsole-consoleEntryLevelDirection'>
+            {
+              props.level === 'error' ? <FontAwesomeIcon icon={faTimesCircle} fixedWidth color='#d9070a' />
+                : props.level === 'warning' ? <FontAwesomeIcon icon={faExclamationTriangle} fixedWidth color='#ffbf02' />
+                  : <FontAwesomeIcon icon={faInfo} fixedWidth color='#124191' />
+            }
+            {
+              props.direction === 'out' ? <FontAwesomeIcon icon={faChevronLeft} fixedWidth />
+                : <FontAwesomeIcon icon={faChevronRight} fixedWidth />
+            }
+          </div>
+          <div className='react-appconsole-consoleEntryPart react-appconsole-consoleEntryMessage'>{props.message}</div>
+        </div >
+      )
+      : null
   }
 
   static stringify = (messageObject) => {
@@ -82,41 +85,41 @@ export default class ConsoleLog extends React.Component {
     return (
       <div className='react-appconsole-consoleLogContainer'>
         <div className='react-appconsole-consoleLogContent' id={this.props.logId}>
-          {this.state.entries.map((entry) => <ConsoleLog.LogEntry key={entry.timestamp} timestamp={entry.timestamp}
-            level={entry.level} direction={entry.direction} message={entry.message} />)}
+          {this.entries.map((entry) => <ConsoleLog.LogEntry key={entry.timestamp} timestamp={entry.timestamp}
+            level={entry.level} direction={entry.direction} message={entry.message}
+            entryFilter={this.props.entryFilter} filterSearchText={this.props.filterSearchText} />)}
         </div>
       </div>
     )
   }
 
   log = ({ level, direction, ...message }) => {
-    let entries = this.state.entries
-    let date = new Date()
-    let milis = String(date.getMilliseconds()).padStart(3, '0')
-    entries.push({
-      timestamp: date.toLocaleTimeString(
-        [],
-        { hour: '2-digit', minute: '2-digit', second: '2-digit' }
-      ) + '.' + milis,
-      level: level,
-      direction: direction,
-      message: ConsoleLog.stringify(message)
+    return new Promise((resolve) => {
+      let date = new Date()
+      let milis = String(date.getMilliseconds()).padStart(3, '0')
+      this.entries.push({
+        timestamp: date.toLocaleTimeString(
+          [],
+          { hour: '2-digit', minute: '2-digit', second: '2-digit' }
+        ) + '.' + milis,
+        level: level,
+        direction: direction || 'in',
+        message: ConsoleLog.stringify(message)
+      })
+      this.props.logModified({ logId: this.props.logId })
+      this.forceUpdate(resolve)
     })
-    this.setState({
-      entries: entries
-    })
-    this.props.logModified({logId: this.props.logId})
   }
 
   info = ({ direction, ...message }) => {
-    this.log({ level: 'info', direction: direction, ...message })
+    return this.log({ level: 'info', direction: direction, ...message })
   }
 
   warn = ({ direction, ...message }) => {
-    this.log({ level: 'warning', direction: direction, ...message })
+    return this.log({ level: 'warning', direction: direction, ...message })
   }
 
   err = ({ direction, ...message }) => {
-    this.log({ level: 'error', direction: direction, ...message })
+    return this.log({ level: 'error', direction: direction, ...message })
   }
 }

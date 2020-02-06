@@ -22,7 +22,6 @@ export default class App extends React.Component {
   componentDidMount = () => {
     this.appConsole.current.addLog({ id: 'systemLog', label: 'System log', ref: this.systemLog })
     this.appConsole.current.addLog({ id: 'buildLog', label: 'Build log', ref: this.buildLog })
-
   }
 
   click = () => {

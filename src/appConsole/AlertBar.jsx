@@ -38,7 +38,7 @@ export default class AlertBar extends React.Component {
       <div className='react-appconsole-alertBar' style={{ background: background, color: color, zIndex: zIndex, ...fadeout }}>
         <span>{this.props.message}</span>
         {this.props.children}
-        {this.props.actions ? <div className='alertBarActions'>
+        {this.props.actions ? <div className='react-appconsole-alertBarActions'>
           {this.props.actions.map((a) => <div className='react-appconsole-alertBarAction' id={a.label} onClick={a.action}>{a.label}</div>)}
         </div>
           : null
