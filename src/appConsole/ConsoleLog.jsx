@@ -41,11 +41,13 @@ export default class ConsoleLog extends React.Component {
       : null
   }
 
-  static stringify = (messageObject) => {
-    return Object.keys(messageObject).map((key) => {
-      let value = messageObject[key]
-      return (value instanceof String) || (typeof value === 'string') ? value : JSON.stringify(value, null, 2)
-    }).join(' : ')
+  static stringify = (message) => {
+    console.log(message)
+    return message instanceof String || typeof message === 'string'
+      ? message
+      : message.map((value) => {
+        return (value instanceof String) || (typeof value === 'string') ? value : JSON.stringify(value, null, 2)
+      }).join(' : ')
   }
 
   static compareLevel = (a, b) => {
@@ -93,7 +95,7 @@ export default class ConsoleLog extends React.Component {
     )
   }
 
-  log = ({ level, direction, ...message }) => {
+  log = ({ level, direction, message }) => {
     return new Promise((resolve) => {
       let date = new Date()
       let milis = String(date.getMilliseconds()).padStart(3, '0')
@@ -102,24 +104,24 @@ export default class ConsoleLog extends React.Component {
           [],
           { hour: '2-digit', minute: '2-digit', second: '2-digit' }
         ) + '.' + milis,
-        level: level,
+        level: level || 'info',
         direction: direction || 'in',
         message: ConsoleLog.stringify(message)
       })
       this.props.logModified({ logId: this.props.logId })
-      this.forceUpdate(resolve)
+      resolve()
     })
   }
 
-  info = ({ direction, ...message }) => {
-    return this.log({ level: 'info', direction: direction, ...message })
+  info = ({ direction, message }) => {
+    return this.log({ level: 'info', direction: direction, message: message })
   }
 
-  warn = ({ direction, ...message }) => {
-    return this.log({ level: 'warning', direction: direction, ...message })
+  warn = ({ direction, message }) => {
+    return this.log({ level: 'warning', direction: direction, message: message })
   }
 
-  err = ({ direction, ...message }) => {
-    return this.log({ level: 'error', direction: direction, ...message })
+  err = ({ direction, message }) => {
+    return this.log({ level: 'error', direction: direction, message: message })
   }
 }

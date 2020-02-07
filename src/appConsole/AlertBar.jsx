@@ -14,8 +14,8 @@ export default class AlertBar extends React.Component {
     error: PropTypes.bool,
     warning: PropTypes.bool,
     message: PropTypes.string,
-    children: PropTypes.any,
-    actions: PropTypes.array
+    actions: PropTypes.array,
+    timeout: PropTypes.number
   }
 
   componentDidMount = () => {
@@ -27,8 +27,9 @@ export default class AlertBar extends React.Component {
   render = () => {
     let background = this.props.error ? '#d9070a' : this.props.warning ? '#ffbf02' : '#124191'
     let color = this.props.error ? '#fff' : this.props.warning ? '#000' : '#fff'
-    let fadeout = !this.props.error && !this.props.warning ? {
-      transition: 'opacity 1s ease-in 4s',
+    let computedTimeout = this.props.timeout ? this.props.timeout - 1.5 : undefined
+    let fadeout = computedTimeout ? {
+      transition: 'opacity 1s ease-in ' + computedTimeout + 's',
       opacity: this.state.opacity
     } : {
       opacity: 1
@@ -37,9 +38,11 @@ export default class AlertBar extends React.Component {
     return (
       <div className='react-appconsole-alertBar' style={{ background: background, color: color, zIndex: zIndex, ...fadeout }}>
         <span>{this.props.message}</span>
-        {this.props.children}
         {this.props.actions ? <div className='react-appconsole-alertBarActions'>
-          {this.props.actions.map((a) => <div className='react-appconsole-alertBarAction' id={a.label} onClick={a.action}>{a.label}</div>)}
+          {this.props.actions.map((action) =>
+            <div className='react-appconsole-alertBarAction' key={action.label} onClick={action.action}>
+              {action.label}
+            </div>)}
         </div>
           : null
         }

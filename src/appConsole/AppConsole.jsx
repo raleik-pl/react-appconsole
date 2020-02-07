@@ -16,7 +16,6 @@ export default class AppConsole extends React.Component {
     super(props)
     this.state = {
       open: false,
-      selectedLog: 0,
       consoleLogFilterError: true,
       consoleLogFilterWarning: true,
       consoleLogFilterInfo: true,
@@ -48,10 +47,10 @@ export default class AppConsole extends React.Component {
       <React.Fragment>
         <div className={this.state.open === true ? 'react-appconsole-tabbedConsole react-appconsole-tabbedConsole-open' : 'react-appconsole-tabbedConsole'}
           style={{ display: this.state.open ? 'block' : 'none' }}>
-          <Tabs forceRenderTabPanel selectedIndex={this.state.selectedLog}
+          <Tabs forceRenderTabPanel selectedIndex={Object.keys(this.logs).indexOf(this.state.selectedLog) >= 0 ? Object.keys(this.logs).indexOf(this.state.selectedLog) : 0}
             onSelect={(index) => {
               this.setState({
-                selectedLog: index,
+                selectedLog: Object.keys(this.logs)[index],
                 [Object.keys(this.logs)[index] + 'Modified']: false
               })
             }}
@@ -132,7 +131,7 @@ export default class AppConsole extends React.Component {
                 .map((key) => {
                   let alert = this.alerts[key]
                   return <AlertBar key={alert.id} warning={alert.level === 'warning'} error={alert.level === 'error'}
-                    message={ConsoleLog.stringify(alert.message)} actions={alert.actions} />
+                    message={ConsoleLog.stringify(alert.message)} actions={alert.actions} timeout={alert.timeout} />
                 })
             }
           </div>
@@ -142,43 +141,58 @@ export default class AppConsole extends React.Component {
     )
   }
 
-  raiseAlert = ({ logRef, id, level, actions, direction, ...message }) => {
+  raiseAlert = ({ logRef, id, level, actions, direction, timeout, message }) => {
     return new Promise((resolve) => {
-      logRef.current.log({ level: level, direction: direction, raiseAlert: 'raise alert', ...message })
+      let computedTimeout = (level === 'info' ? timeout || 5 : timeout)
+      console.log(computedTimeout)
       this.alerts[id] = {
         id: id,
-        level: level,
+        level: level || 'warning',
         actions: actions || [],
-        direction: direction,
-        message: message
+        direction: direction || 'in',
+        message: message || id,
+        timeout: computedTimeout
       }
+      logRef.current.log({
+        level: level || 'warning',
+        direction: direction || 'in',
+        message: [computedTimeout ? 'raise alert for ' + computedTimeout + 's' : 'raise alert'].concat(message || id)
+      })
       this.shakeBtn()
       this.forceUpdate(resolve)
-    })
-  }
-
-  clearAlert = ({ logRef, id, ...message }) => {
-    return new Promise((resolve) => {
-      if (Object.keys(message).length > 0) {
-        this.alerts[id] = {
-          id: id,
-          level: 'info',
-          message: message
-        }
-        this.forceUpdate(resolve)
-        logRef.current.log({ level: 'info', clearAlert: 'clear alert', ...message })
+      if (computedTimeout) {
         setTimeout(() => {
           delete this.alerts[id]
           this.forceUpdate()
-        }, 5000)
-        this.shakeBtn()
-      } else {
-        if (this.alerts[id]) {
-          logRef.current.log({ level: 'info', clearAlert: 'clear alert', ...this.alerts[id].message })
-          delete this.alerts[id]
-          this.shakeBtn()
-          this.forceUpdate(resolve)
+        }, computedTimeout * 1000)
+      }
+    })
+  }
+
+  clearAlert = ({ logRef, id, level, actions, direction, timeout, message }) => {
+    return new Promise((resolve) => {
+      let alert = this.alerts[id]
+      if (alert) {
+        let computedTimeout = timeout || (message ? 5 : 2)
+        this.alerts[id] = {
+          id: id,
+          level: level || alert.level,
+          actions: actions || alert.actions,
+          direction: direction || alert.direction,
+          message: message || alert.message,
+          timeout: computedTimeout
         }
+        this.forceUpdate(resolve)
+        logRef.current.log({
+          level: 'info',
+          direction: direction || alert.direction,
+          message: ['clear alert'].concat(message || alert.message)
+        })
+        setTimeout(() => {
+          delete this.alerts[id]
+          this.forceUpdate()
+        }, computedTimeout * 1000)
+        this.shakeBtn()
       }
     })
   }
@@ -201,15 +215,22 @@ export default class AppConsole extends React.Component {
     })
   }
 
-  logModified = ({ logId }) => {
-    if (!this.state.open) {
-      this.setState({
-        selectedLog: Object.keys(this.logs).indexOf(logId)
-      })
+  logModified = ({ logId, reset }) => {
+    let state
+    if (!this.state.open && (logId !== this.state.selectedLog)) {
+      state = {
+        selectedLog: logId
+      }
     }
-    this.setState({
-      [logId + 'Modified']: true
-    })
+    if (!this.state[logId + 'Modified'] || reset) {
+      state = {
+        ...state,
+        [logId + 'Modified']: !reset
+      }
+    }
+    if (state) {
+      this.setState(state)
+    }
   }
 
   toggle = () => {
@@ -231,8 +252,9 @@ export default class AppConsole extends React.Component {
   filterItemAction = (event) => {
     switch (event.currentTarget.id) {
       case 'react-appconsole-consoleLogFilterThrash':
-        let logRef = this.logs[Object.keys(this.logs)[this.state.selectedLog]].ref
+        let logRef = this.logs[this.state.selectedLog].ref
         logRef.current.entries = []
+        this.logModified({ logId: this.logs[this.state.selectedLog].id, reset: true })
         logRef.current.forceUpdate()
         break
       case 'react-appconsole-consoleLogFilterError':

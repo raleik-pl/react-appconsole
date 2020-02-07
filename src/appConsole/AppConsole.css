@@ -97,6 +97,13 @@
 
 .react-appconsole-consoleLogTabModified {
   position: absolute;
+  left: 0px;
+  width: 1.5rem;
+  text-align: center;
+}
+
+.react-appconsole-consoleLogTabClose {
+  position: absolute;
   right: 0px;
   width: 1.5rem;
   text-align: center;
