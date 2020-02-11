@@ -4,9 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfo, faExclamationTriangle, faTimesCircle, faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 
 export default class ConsoleLog extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.entries = []
+    this.cntr = 999;
   }
 
   static propTypes = {
@@ -42,7 +43,6 @@ export default class ConsoleLog extends React.Component {
   }
 
   static stringify = (message) => {
-    console.log(message)
     return message instanceof String || typeof message === 'string'
       ? message
       : message.map((value) => {
@@ -52,6 +52,15 @@ export default class ConsoleLog extends React.Component {
 
   static compareLevel = (a, b) => {
     return ConsoleLog.levelNum(b) - ConsoleLog.levelNum(a)
+  }
+
+  static timestampStr = (timestampMicros) => {
+    let date = new Date(timestampMicros / 1000)
+    let milis = String(date.getMilliseconds()).padStart(3, '0')
+    return date.toLocaleTimeString(
+      [],
+      { hour: '2-digit', minute: '2-digit', second: '2-digit' }
+    ) + '.' + milis
   }
 
   static levelNum = (level) => {
@@ -87,41 +96,42 @@ export default class ConsoleLog extends React.Component {
     return (
       <div className='react-appconsole-consoleLogContainer'>
         <div className='react-appconsole-consoleLogContent' id={this.props.logId}>
-          {this.entries.map((entry) => <ConsoleLog.LogEntry key={entry.timestamp} timestamp={entry.timestamp}
-            level={entry.level} direction={entry.direction} message={entry.message}
-            entryFilter={this.props.entryFilter} filterSearchText={this.props.filterSearchText} />)}
+          {this.entries.sort((a, b) => a.timestampMicros - b.timestampMicros)
+            .map((entry) => <ConsoleLog.LogEntry key={entry.timestampMicros} timestamp={ConsoleLog.timestampStr(entry.timestampMicros)}
+              level={entry.level} direction={entry.direction} message={ConsoleLog.stringify(entry.message)}
+              entryFilter={this.props.entryFilter} filterSearchText={this.props.filterSearchText} />)}
         </div>
       </div>
     )
   }
 
-  log = ({ level, direction, message }) => {
+  log = ({ level, direction, timestampMicros, message }) => {
     return new Promise((resolve) => {
-      let date = new Date()
-      let milis = String(date.getMilliseconds()).padStart(3, '0')
       this.entries.push({
-        timestamp: date.toLocaleTimeString(
-          [],
-          { hour: '2-digit', minute: '2-digit', second: '2-digit' }
-        ) + '.' + milis,
+        timestampMicros: timestampMicros || (Date.now() * 1000 + this.counter()),
         level: level || 'info',
         direction: direction || 'in',
-        message: ConsoleLog.stringify(message)
+        message: message
       })
       this.props.logModified({ logId: this.props.logId })
       resolve()
     })
   }
 
-  info = ({ direction, message }) => {
-    return this.log({ level: 'info', direction: direction, message: message })
+  info = ({ direction, timestampMicros, message }) => {
+    return this.log({ level: 'info', direction: direction, timestampMicros: timestampMicros, message: message })
   }
 
-  warn = ({ direction, message }) => {
-    return this.log({ level: 'warning', direction: direction, message: message })
+  warn = ({ direction, timestampMicros, message }) => {
+    return this.log({ level: 'warning', direction: direction, timestampMicros: timestampMicros, message: message })
   }
 
-  err = ({ direction, message }) => {
-    return this.log({ level: 'error', direction: direction, message: message })
+  err = ({ direction, timestampMicros, message }) => {
+    return this.log({ level: 'error', direction: direction, timestampMicros: timestampMicros, message: message })
+  }
+  
+  counter = () => {
+    this.cntr = ++this.cntr > 999 ? 0 : this.cntr
+    return this.cntr
   }
 }

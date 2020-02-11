@@ -144,7 +144,6 @@ export default class AppConsole extends React.Component {
   raiseAlert = ({ logRef, id, level, actions, direction, timeout, message }) => {
     return new Promise((resolve) => {
       let computedTimeout = (level === 'info' ? timeout || 5 : timeout)
-      console.log(computedTimeout)
       this.alerts[id] = {
         id: id,
         level: level || 'warning',

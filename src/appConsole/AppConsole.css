@@ -180,6 +180,10 @@
   white-space: pre-wrap;
 }
 
+.react-appconsole-consoleEntryLevelDirection {
+  display: flex;
+}
+
 .react-appconsole-shake {
   animation: 0.3s ease react-appconsole-shake;
 }
