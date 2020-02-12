@@ -36,7 +36,7 @@
 .react-appconsole-alertBarStack {
   display: flex;
   flex-direction: row-reverse;
-  align-items: flex-end;
+  align-items: flex-start;
   flex-wrap: wrap-reverse;
   justify-content: flex-end;
 }

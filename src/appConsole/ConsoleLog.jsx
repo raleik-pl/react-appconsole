@@ -1,20 +1,21 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faInfo, faExclamationTriangle, faTimesCircle, faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
+import { faInfo, faExclamationTriangle, faTimesCircle, faChevronRight, faChevronLeft, faBell, faBellSlash, faBullhorn } from '@fortawesome/free-solid-svg-icons'
 
 export default class ConsoleLog extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.entries = []
-    this.cntr = 999;
+    this.cntr = 999
   }
 
   static propTypes = {
     logId: PropTypes.string.isRequired,
     logModified: PropTypes.func,
     entryFilter: PropTypes.array.isRequired,
-    filterSearchText: PropTypes.string
+    filterSearchText: PropTypes.string,
+    open: PropTypes.oneOfType([PropTypes.bool, PropTypes.string])
   }
 
   static LogEntry = (props) => {
@@ -32,8 +33,15 @@ export default class ConsoleLog extends React.Component {
                   : <FontAwesomeIcon icon={faInfo} fixedWidth color='#124191' />
             }
             {
-              props.direction === 'out' ? <FontAwesomeIcon icon={faChevronLeft} fixedWidth />
-                : <FontAwesomeIcon icon={faChevronRight} fixedWidth />
+              props.direction === 'out'
+                ? <FontAwesomeIcon icon={faChevronLeft} fixedWidth />
+                : props.direction === 'in'
+                  ? <FontAwesomeIcon icon={faChevronRight} fixedWidth />
+                  : props.direction === 'bell'
+                    ? <FontAwesomeIcon icon={faBell} fixedWidth />
+                    : props.direction === 'nobell'
+                      ? <FontAwesomeIcon icon={faBellSlash} fixedWidth />
+                      : <FontAwesomeIcon icon={faBullhorn} fixedWidth />
             }
           </div>
           <div className='react-appconsole-consoleEntryPart react-appconsole-consoleEntryMessage'>{props.message}</div>
@@ -47,7 +55,7 @@ export default class ConsoleLog extends React.Component {
       ? message
       : message.map((value) => {
         return (value instanceof String) || (typeof value === 'string') ? value : JSON.stringify(value, null, 2)
-      }).join(' : ')
+      }).join(' • ')
   }
 
   static compareLevel = (a, b) => {
@@ -96,10 +104,11 @@ export default class ConsoleLog extends React.Component {
     return (
       <div className='react-appconsole-consoleLogContainer'>
         <div className='react-appconsole-consoleLogContent' id={this.props.logId}>
-          {this.entries.sort((a, b) => a.timestampMicros - b.timestampMicros)
-            .map((entry) => <ConsoleLog.LogEntry key={entry.timestampMicros} timestamp={ConsoleLog.timestampStr(entry.timestampMicros)}
-              level={entry.level} direction={entry.direction} message={ConsoleLog.stringify(entry.message)}
-              entryFilter={this.props.entryFilter} filterSearchText={this.props.filterSearchText} />)}
+          {this.props.open ? this.entries.map((entry) => <ConsoleLog.LogEntry key={entry.timestampMicros}
+            timestamp={ConsoleLog.timestampStr(entry.timestampMicros)} level={entry.level}
+            direction={entry.direction} message={ConsoleLog.stringify(entry.message)}
+            entryFilter={this.props.entryFilter} filterSearchText={this.props.filterSearchText} />)
+            : null}
         </div>
       </div>
     )
@@ -129,7 +138,13 @@ export default class ConsoleLog extends React.Component {
   err = ({ direction, timestampMicros, message }) => {
     return this.log({ level: 'error', direction: direction, timestampMicros: timestampMicros, message: message })
   }
-  
+
+  clear = () => {
+    this.entries = []
+    this.props.logModified({ logId: this.props.logId, reset: true })
+    this.forceUpdate()
+  }
+
   counter = () => {
     this.cntr = ++this.cntr > 999 ? 0 : this.cntr
     return this.cntr

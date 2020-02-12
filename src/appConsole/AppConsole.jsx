@@ -1,5 +1,5 @@
 import {
-  faArrowDown, faArrowUp, faEllipsisH, faTrashAlt, faInfo,
+  faArrowDown, faArrowUp, faEllipsisH, faTrashAlt, faInfo, faBell, faBellSlash, faBullhorn,
   faExclamationTriangle, faTimesCircle, faTimes, faChevronLeft, faChevronRight
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -21,6 +21,9 @@ export default class AppConsole extends React.Component {
       consoleLogFilterInfo: true,
       consoleLogFilterOut: true,
       consoleLogFilterIn: true,
+      consoleLogFilterBell: true,
+      consoleLogFilterNoBell: true,
+      consoleLogFilterHorn: true,
       consoleLogFilterSearchText: ''
     }
     this.alerts = {}
@@ -86,10 +89,19 @@ export default class AppConsole extends React.Component {
                 style={{ color: this.state.consoleLogFilterInfo ? '#124191' : '#e0e0e0' }} />
               <FontAwesomeIcon id='react-appconsole-consoleLogFilterOut' icon={faChevronLeft} fixedWidth
                 className='react-appconsole-consoleLogFilterItem' onClick={this.filterItemAction}
-                style={{ color: this.state.consoleLogFilterOut ? '#124191' : '#e0e0e0' }} />
+                style={{ color: this.state.consoleLogFilterOut ? '#000' : '#e0e0e0' }} />
               <FontAwesomeIcon id='react-appconsole-consoleLogFilterIn' icon={faChevronRight} fixedWidth
                 className='react-appconsole-consoleLogFilterItem' onClick={this.filterItemAction}
-                style={{ color: this.state.consoleLogFilterIn ? '#124191' : '#e0e0e0' }} />
+                style={{ color: this.state.consoleLogFilterIn ? '#000' : '#e0e0e0' }} />
+              <FontAwesomeIcon id='react-appconsole-consoleLogFilterBell' icon={faBell} fixedWidth
+                className='react-appconsole-consoleLogFilterItem' onClick={this.filterItemAction}
+                style={{ color: this.state.consoleLogFilterBell ? '#000' : '#e0e0e0' }} />
+              <FontAwesomeIcon id='react-appconsole-consoleLogFilterNoBell' icon={faBellSlash} fixedWidth
+                className='react-appconsole-consoleLogFilterItem' onClick={this.filterItemAction}
+                style={{ color: this.state.consoleLogFilterNoBell ? '#000' : '#e0e0e0' }} />
+              <FontAwesomeIcon id='react-appconsole-consoleLogFilterHorn' icon={faBullhorn} fixedWidth
+                className='react-appconsole-consoleLogFilterItem' onClick={this.filterItemAction}
+                style={{ color: this.state.consoleLogFilterHorn ? '#000' : '#e0e0e0' }} />
               <input type='search' id='react-appconsole-consoleLogFilterSearchText' placeholder='Filter output'
                 className='react-appconsole-consoleLogFilterItem react-appconsole-consoleLogFilterSearchText'
                 onChange={this.filterItemAction} value={this.state.consoleLogFilterSearchText} />
@@ -101,13 +113,16 @@ export default class AppConsole extends React.Component {
               let log = this.logs[key]
               return (
                 <TabPanel key={log.id} className='react-appconsole-consoleLogTabPanel'>
-                  <ConsoleLog logId={log.id} ref={log.ref} logModified={this.logModified}
+                  <ConsoleLog logId={log.id} ref={log.ref} logModified={this.logModified} open={this.state.open}
                     entryFilter={[
                       this.state.consoleLogFilterError && 'error',
                       this.state.consoleLogFilterWarning && 'warning',
                       this.state.consoleLogFilterInfo && 'info',
                       this.state.consoleLogFilterOut && 'out',
-                      this.state.consoleLogFilterIn && 'in'
+                      this.state.consoleLogFilterIn && 'in',
+                      this.state.consoleLogFilterBell && 'bell',
+                      this.state.consoleLogFilterNoBell && 'nobell',
+                      this.state.consoleLogFilterHorn && 'horn'
                     ]} filterSearchText={this.state.consoleLogFilterSearchText} />
                 </TabPanel>
               )
@@ -141,21 +156,21 @@ export default class AppConsole extends React.Component {
     )
   }
 
-  raiseAlert = ({ logRef, id, level, actions, direction, timeout, message }) => {
+  raiseAlert = ({ logRef, id, level, actions, timeout, message }) => {
     return new Promise((resolve) => {
       let computedTimeout = (level === 'info' ? timeout || 5 : timeout)
       this.alerts[id] = {
         id: id,
         level: level || 'warning',
         actions: actions || [],
-        direction: direction || 'in',
+        direction: computedTimeout ? 'horn' : 'bell',
         message: message || id,
         timeout: computedTimeout
       }
       logRef.current.log({
         level: level || 'warning',
-        direction: direction || 'in',
-        message: [computedTimeout ? 'raise alert for ' + computedTimeout + 's' : 'raise alert'].concat(message || id)
+        direction: computedTimeout ? 'horn' : 'bell',
+        message: message || id
       })
       this.shakeBtn()
       this.forceUpdate(resolve)
@@ -168,7 +183,7 @@ export default class AppConsole extends React.Component {
     })
   }
 
-  clearAlert = ({ logRef, id, level, actions, direction, timeout, message }) => {
+  clearAlert = ({ logRef, id, level, actions, timeout, message }) => {
     return new Promise((resolve) => {
       let alert = this.alerts[id]
       if (alert) {
@@ -177,15 +192,15 @@ export default class AppConsole extends React.Component {
           id: id,
           level: level || alert.level,
           actions: actions || alert.actions,
-          direction: direction || alert.direction,
+          direction: 'nobell',
           message: message || alert.message,
           timeout: computedTimeout
         }
         this.forceUpdate(resolve)
         logRef.current.log({
           level: 'info',
-          direction: direction || alert.direction,
-          message: ['clear alert'].concat(message || alert.message)
+          direction: 'nobell',
+          message: message || alert.message
         })
         setTimeout(() => {
           delete this.alerts[id]
@@ -230,6 +245,9 @@ export default class AppConsole extends React.Component {
     if (state) {
       this.setState(state)
     }
+    if (this.state.open && this.state.selectedLog === logId) {
+      this.logs[logId].ref.current.forceUpdate()
+    }
   }
 
   toggle = () => {
@@ -251,10 +269,7 @@ export default class AppConsole extends React.Component {
   filterItemAction = (event) => {
     switch (event.currentTarget.id) {
       case 'react-appconsole-consoleLogFilterThrash':
-        let logRef = this.logs[this.state.selectedLog].ref
-        logRef.current.entries = []
-        this.logModified({ logId: this.logs[this.state.selectedLog].id, reset: true })
-        logRef.current.forceUpdate()
+        this.logs[this.state.selectedLog].ref.current.clear()
         break
       case 'react-appconsole-consoleLogFilterError':
         this.setState({
@@ -279,6 +294,21 @@ export default class AppConsole extends React.Component {
       case 'react-appconsole-consoleLogFilterIn':
         this.setState({
           consoleLogFilterIn: !this.state.consoleLogFilterIn
+        })
+        break
+      case 'react-appconsole-consoleLogFilterBell':
+        this.setState({
+          consoleLogFilterBell: !this.state.consoleLogFilterBell
+        })
+        break
+      case 'react-appconsole-consoleLogFilterNoBell':
+        this.setState({
+          consoleLogFilterNoBell: !this.state.consoleLogFilterNoBell
+        })
+        break
+      case 'react-appconsole-consoleLogFilterHorn':
+        this.setState({
+          consoleLogFilterHorn: !this.state.consoleLogFilterHorn
         })
         break
       case 'react-appconsole-consoleLogFilterSearchText':
