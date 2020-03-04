@@ -54,8 +54,8 @@ export default class ConsoleLog extends React.Component {
     return message instanceof String || typeof message === 'string'
       ? message
       : message.map((value) => {
-        return (value instanceof String) || (typeof value === 'string') ? value : JSON.stringify(value, null, 2)
-      }).join(' • ')
+          return (value instanceof String) || (typeof value === 'string') ? value : JSON.stringify(value, null, 2)
+        }).join(' • ')
   }
 
   static compareLevel = (a, b) => {

@@ -1,3 +1,8 @@
+
+
+
+
+
 import React from 'react'
 import './App.css'
 
@@ -51,12 +56,13 @@ export default class App extends React.Component {
           <input type='button' id='alertRaiseBtn' value='raiseAlert' onClick={this.raiseAlert} />
           <input type='button' id='alertClearBtn' value='clearAlert' onClick={this.clearAlert} />
         </div>
+        <div>
+          <input type='checkbox' id='workingChkBox' onClick={this.working} />
+          <label htmlFor='workingChkBox'>working</label>
+        </div>
         <AppConsole wrapperId='react-appconsole-container' ref={this.appConsole} />
       </React.Fragment>
     )
-  }
-
-  componentDidMount = () => {
   }
 
   addLog = () => {
@@ -115,5 +121,10 @@ export default class App extends React.Component {
     let timeout = parseInt(document.getElementById('alertTimeout').value, 10) || undefined
     this.appConsole.current.clearAlert({logRef: this[logRef], id: id, level: level, actions: actions,
       direction: direction, timeout: timeout, message: message})
+  }
+
+  working = () => {
+    let working = document.getElementById('workingChkBox').checked
+    this.appConsole.current.working({ working: working })
   }
 }

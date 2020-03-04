@@ -188,6 +188,12 @@
   animation: 0.3s ease react-appconsole-shake;
 }
 
+.react-appconsole-working {
+  animation: 3s ease react-appconsole-working;
+  animation-direction: normal;
+  animation-iteration-count: infinite;
+}
+
 @keyframes react-appconsole-shake {
   0% {
     rotate: 0deg;
@@ -203,5 +209,23 @@
   }
   100% {
     rotate: 0deg;
+  }
+}
+
+@keyframes react-appconsole-working {
+  0% {
+    rotate: 0deg;
+  }
+  5% {
+    rotate: -15deg;
+  }
+  10% {
+    rotate: 0deg;
+  }
+  15% {
+    rotate: -15deg;
+  }
+  20% {
+    rotate: 0deg
   }
 }

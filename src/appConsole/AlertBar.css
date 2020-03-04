@@ -37,3 +37,176 @@
   font-weight: bold;
   cursor: pointer;
 }
+
+:root {
+  --inProgress-start: 0%;
+}
+
+.react-appconsole-alertBar-inProgress {
+  background: rgb(255, 255, 255);
+  background: radial-gradient(circle, #000 0%, #fff 1%) no-repeat;
+  animation-name: react-appconsole-pulse;
+  animation-duration: 3s;
+  animation-timing-function: linear;
+  animation-direction: normal;
+  animation-iteration-count: infinite;
+}
+
+:root {
+  --pulse-bottom: 70%;
+  --pulse-left: 25%;
+}
+
+@keyframes react-appconsole-pulse {
+  0% {
+    background: radial-gradient(circle, #000 0%, #fff 3%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  1% {
+    background: radial-gradient(circle, #000 0%, #fff 4%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  2% {
+    background: radial-gradient(circle, #000 0%, #fff 6%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  3% {
+    background: radial-gradient(circle, #000 0%, #fff 9%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  4% {
+    background: radial-gradient(circle, #000 0%, #fff 13%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  5% {
+    background: radial-gradient(circle, #000 0%, #fff 18%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  6% {
+    background: radial-gradient(circle, #000 0%, #fff 17%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  7% {
+    background: radial-gradient(circle, #000 0%, #fff 15%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  8% {
+    background: radial-gradient(circle, #000 0%, #fff 12%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  9% {
+    background: radial-gradient(circle, #000 0%, #fff 8%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  10% {
+    background: radial-gradient(circle, #000 0%, #fff 11%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  11% {
+    background: radial-gradient(circle, #000 0%, #fff 15%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  12% {
+    background: radial-gradient(circle, #000 0%, #fff 20%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  13% {
+    background: radial-gradient(circle, #000 0%, #fff 20%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  14% {
+    background: radial-gradient(circle, #000 0%, #fff 20%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  15% {
+    background: radial-gradient(circle, #000 0%, #fff 19%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  16% {
+    background: radial-gradient(circle, #000 0%, #fff 19%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  17% {
+    background: radial-gradient(circle, #000 0%, #fff 17%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  18% {
+    background: radial-gradient(circle, #000 0%, #fff 17%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  19% {
+    background: radial-gradient(circle, #000 0%, #fff 14%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  20% {
+    background: radial-gradient(circle, #000 0%, #fff 14%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  21% {
+    background: radial-gradient(circle, #000 0%, #fff 10%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  22% {
+    background: radial-gradient(circle, #000 0%, #fff 10%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  23% {
+    background: radial-gradient(circle, #000 0%, #fff 7%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  24% {
+    background: radial-gradient(circle, #000 0%, #fff 7%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  25% {
+    background: radial-gradient(circle, #000 0%, #fff 5%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  26% {
+    background: radial-gradient(circle, #000 0%, #fff 5%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  27% {
+    background: radial-gradient(circle, #000 0%, #fff 4%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  28% {
+    background: radial-gradient(circle, #000 0%, #fff 0%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+  100% {
+    background: radial-gradient(circle, #000 0%, #fff 0%) no-repeat;
+    background-size: 200% 200%;
+    background-position: var(--pulse-left) var(--pulse-bottom);
+  }
+
+}

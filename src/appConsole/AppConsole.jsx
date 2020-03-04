@@ -1,6 +1,6 @@
 import {
   faArrowDown, faArrowUp, faEllipsisH, faTrashAlt, faInfo, faBell, faBellSlash, faBullhorn,
-  faExclamationTriangle, faTimesCircle, faTimes, faChevronLeft, faChevronRight
+  faExclamationTriangle, faTimesCircle, faTimes, faChevronLeft, faChevronRight, faHammer, faShapes
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
@@ -16,6 +16,7 @@ export default class AppConsole extends React.Component {
     super(props)
     this.state = {
       open: false,
+      working: false,
       consoleLogFilterError: true,
       consoleLogFilterWarning: true,
       consoleLogFilterInfo: true,
@@ -131,9 +132,15 @@ export default class AppConsole extends React.Component {
         </div>
         <div className='react-appconsole-alertBarContainer'>
           <div className='react-appconsole-appConsoleToggle'>
-            <div className='react-appconsole-alertBar' style={{ background: '#fff', cursor: 'pointer' }} onClick={this.toggle}>
+            <div className='react-appconsole-alertBar'
+              style={{ background: '#fff', cursor: 'pointer' }}
+              onClick={this.toggle}
+            >
               <div style={{ transition: 'max-height 0.3s ease', maxHeight: this.state.open === true ? '0px' : '25px', overflow: 'hidden' }}>
-                <FontAwesomeIcon icon={faArrowUp} fixedWidth />
+                {this.state.working
+                  ? <FontAwesomeIcon icon={faHammer} fixedWidth className='react-appconsole-working' flip='horizontal' />
+                  : <FontAwesomeIcon icon={faArrowUp} fixedWidth />
+                }
               </div>
               <div style={{ transition: 'max-height 0.3s ease', maxHeight: this.state.open === true ? '25px' : '0px', overflow: 'hidden' }}>
                 <FontAwesomeIcon icon={faArrowDown} fixedWidth />
@@ -226,6 +233,12 @@ export default class AppConsole extends React.Component {
     return new Promise((resolve) => {
       delete this.logs[id]
       this.forceUpdate(resolve)
+    })
+  }
+
+  working = ({ working }) => {
+    this.setState({
+      working: working
     })
   }
 
