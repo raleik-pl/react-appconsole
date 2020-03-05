@@ -199,13 +199,13 @@
     rotate: 0deg;
   }
   20% {
-    rotate: 30deg;
+    rotate: 15deg;
   }
   40% {
-    rotate: -30deg;
+    rotate: -15deg;
   }
   80% {
-    rotate: 30deg;
+    rotate: 15deg;
   }
   100% {
     rotate: 0deg;
@@ -217,15 +217,18 @@
     rotate: 0deg;
   }
   5% {
-    rotate: -15deg;
-  }
-  10% {
     rotate: 0deg;
   }
-  15% {
+  10% {
     rotate: -15deg;
   }
   20% {
+    rotate: 15deg;
+  }
+  25% {
+    rotate: -15deg;
+  }
+  30% {
     rotate: 0deg
   }
 }
