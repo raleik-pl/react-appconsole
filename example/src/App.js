@@ -37,9 +37,10 @@ export default class App extends React.Component {
           <label htmlFor='alertId'>id*</label>
           <input type='text' placeholder='id' id='alertId' />
           <label htmlFor='alertLevel'>level</label>
-          <select id='alertLevel' size={3}>
+          <select id='alertLevel' size={4}>
             <option value='info'>info</option>
             <option value='warning'>warning</option>
+            <option value='success'>success</option>
             <option value='error'>error</option>
           </select>
           <label htmlFor='alertActions'>actions</label>
@@ -53,6 +54,7 @@ export default class App extends React.Component {
           <textarea id='alertMessage' placeholder='String || [any, ...]'></textarea>
           <label htmlFor='alertTimeout'>timeout</label>
           <input type='number' id='alertTimeout' min={0} />
+          <input type='button' id='announceBtn' value='announce' onClick={this.announce} />
           <input type='button' id='alertRaiseBtn' value='raiseAlert' onClick={this.raiseAlert} />
           <input type='button' id='alertClearBtn' value='clearAlert' onClick={this.clearAlert} />
         </div>
@@ -79,6 +81,29 @@ export default class App extends React.Component {
     delete this[id]
   }
 
+  announce = () => {
+    let logRef = document.getElementById('alertLogRef').value
+    let id = document.getElementById('alertId').value
+    let level = document.getElementById('alertLevel').value
+    let actions
+    try {
+      actions = JSON.parse(document.getElementById('alertActions').value || '[]')
+    } catch(err) {
+
+    }
+    let direction = document.getElementById('alertDirection').value
+    let message
+    try {
+        message = JSON.parse(document.getElementById('alertMessage').value)
+    } catch(err) {
+      message = document.getElementById('alertMessage').value
+    }
+    let timeout = parseInt(document.getElementById('alertTimeout').value, 10)
+    this.appConsole.current.announce({logRef: this[logRef], id: id, level: level, actions: actions,
+      direction: direction, timeout: timeout, message: message})
+    // this[logRef].current.info({ message: 'zonk' })
+  }
+
   raiseAlert = () => {
     let logRef = document.getElementById('alertLogRef').value
     let id = document.getElementById('alertId').value
@@ -96,9 +121,9 @@ export default class App extends React.Component {
     } catch(err) {
       message = document.getElementById('alertMessage').value
     }
-    let timeout = parseInt(document.getElementById('alertTimeout').value, 10) || undefined
     this.appConsole.current.raiseAlert({logRef: this[logRef], id: id, level: level, actions: actions,
-      direction: direction, timeout: timeout, message: message})
+      direction: direction, message: message})
+    // this[logRef].current.info({ message: 'zonk' })
   }
 
   clearAlert = () => {
@@ -118,9 +143,8 @@ export default class App extends React.Component {
     } catch(err) {
       message = document.getElementById('alertMessage').value
     }
-    let timeout = parseInt(document.getElementById('alertTimeout').value, 10) || undefined
     this.appConsole.current.clearAlert({logRef: this[logRef], id: id, level: level, actions: actions,
-      direction: direction, timeout: timeout, message: message})
+      direction: direction, message: message})
   }
 
   working = () => {

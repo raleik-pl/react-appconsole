@@ -33,6 +33,10 @@
   margin-right: 0.25rem;
 }
 
+.react-appconsole-appConsoleToggle-icon {
+  scale: 1;
+}
+
 .react-appconsole-alertBarStack {
   display: flex;
   flex-direction: row-reverse;
@@ -185,18 +189,22 @@
 }
 
 .react-appconsole-shake {
-  animation: 0.3s ease react-appconsole-shake;
+  animation: 0.3s ease react-appconsole-shake !important;
+}
+
+.react-appconsole-grow {
+  animation: 0.3s ease react-appconsole-grow !important;
 }
 
 .react-appconsole-working {
-  animation: 3s ease react-appconsole-working;
-  animation-direction: normal;
+  animation: 1s ease-in-out react-appconsole-working;
+  animation-direction: alternate;
   animation-iteration-count: infinite;
 }
 
 @keyframes react-appconsole-shake {
   0% {
-    rotate: 0deg;
+    rotate: -15deg;
   }
   20% {
     rotate: 15deg;
@@ -212,23 +220,23 @@
   }
 }
 
-@keyframes react-appconsole-working {
+@keyframes react-appconsole-grow {
   0% {
-    rotate: 0deg;
-  }
-  5% {
-    rotate: 0deg;
-  }
-  10% {
-    rotate: -15deg;
-  }
-  20% {
-    rotate: 15deg;
+    scale: 1;
   }
   25% {
+    scale: 1.5
+  }
+  100% {
+    scale: 1;
+  }
+}
+
+@keyframes react-appconsole-working {
+  0% {
     rotate: -15deg;
   }
-  30% {
-    rotate: 0deg
+  100% {
+    rotate: 15deg;
   }
 }

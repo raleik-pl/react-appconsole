@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faInfo, faExclamationTriangle, faTimesCircle, faChevronRight, faChevronLeft, faBell, faBellSlash, faBullhorn } from '@fortawesome/free-solid-svg-icons'
+import { faInfo, faExclamationTriangle, faTimesCircle, faChevronRight, faChevronLeft, faBell, faBellSlash, faBullhorn, faCheckSquare } from '@fortawesome/free-solid-svg-icons'
 
 export default class ConsoleLog extends React.Component {
   constructor (props) {
@@ -20,28 +20,38 @@ export default class ConsoleLog extends React.Component {
 
   static LogEntry = (props) => {
     return props.entryFilter.includes(props.level) && props.entryFilter.includes(props.direction) &&
-      (props.message.includes(props.filterSearchText || '') || props.timestamp.includes(props.filterSearchText || ''))
+      (props.message.toLowerCase().includes(props.filterSearchText.toLowerCase() || '') ||
+        props.timestamp.includes(props.filterSearchText || ''))
       ? (
         <div className='react-appconsole-consoleEntry' style={{
-          backgroundColor: props.level === 'error' ? '#d9070a08' : props.level === 'warning' ? '#ffbf0208' : null
+          backgroundColor: props.level === 'error'
+            ? '#d9070a08'
+            : props.level === 'success'
+              ? '#62ac0008'
+              : props.level === 'warning'
+                ? '#ffbf0208'
+                : null
         }}>
           <div className='react-appconsole-consoleEntryPart react-appconsole-consoleEntryTimestamp'>{props.timestamp}</div>
           <div className='react-appconsole-consoleEntryPart react-appconsole-consoleEntryLevelDirection'>
-            {
-              props.level === 'error' ? <FontAwesomeIcon icon={faTimesCircle} fixedWidth color='#d9070a' />
-                : props.level === 'warning' ? <FontAwesomeIcon icon={faExclamationTriangle} fixedWidth color='#ffbf02' />
+            {props.level === 'error'
+              ? <FontAwesomeIcon icon={faTimesCircle} fixedWidth color='#d9070a' />
+              : props.level === 'success'
+                ? <FontAwesomeIcon icon={faCheckSquare} fixedWidth color='#62ac00' />
+                : props.level === 'warning'
+                  ? <FontAwesomeIcon icon={faExclamationTriangle} fixedWidth color='#ffbf02' />
                   : <FontAwesomeIcon icon={faInfo} fixedWidth color='#124191' />
+
             }
-            {
-              props.direction === 'out'
-                ? <FontAwesomeIcon icon={faChevronLeft} fixedWidth />
-                : props.direction === 'in'
-                  ? <FontAwesomeIcon icon={faChevronRight} fixedWidth />
-                  : props.direction === 'bell'
-                    ? <FontAwesomeIcon icon={faBell} fixedWidth />
-                    : props.direction === 'nobell'
-                      ? <FontAwesomeIcon icon={faBellSlash} fixedWidth />
-                      : <FontAwesomeIcon icon={faBullhorn} fixedWidth />
+            {props.direction === 'out'
+              ? <FontAwesomeIcon icon={faChevronLeft} fixedWidth />
+              : props.direction === 'in'
+                ? <FontAwesomeIcon icon={faChevronRight} fixedWidth />
+                : props.direction === 'bell'
+                  ? <FontAwesomeIcon icon={faBell} fixedWidth />
+                  : props.direction === 'nobell'
+                    ? <FontAwesomeIcon icon={faBellSlash} fixedWidth />
+                    : <FontAwesomeIcon icon={faBullhorn} fixedWidth />
             }
           </div>
           <div className='react-appconsole-consoleEntryPart react-appconsole-consoleEntryMessage'>{props.message}</div>
@@ -54,12 +64,12 @@ export default class ConsoleLog extends React.Component {
     return message instanceof String || typeof message === 'string'
       ? message
       : message.map((value) => {
-          return (value instanceof String) || (typeof value === 'string') ? value : JSON.stringify(value, null, 2)
-        }).join(' • ')
+        return (value instanceof String) || (typeof value === 'string') ? value : JSON.stringify(value, null, 2)
+      }).join(' • ')
   }
 
   static compareLevel = (a, b) => {
-    return ConsoleLog.levelNum(b) - ConsoleLog.levelNum(a)
+    return ConsoleLog.levelNum(a) - ConsoleLog.levelNum(b)
   }
 
   static timestampStr = (timestampMicros) => {
@@ -75,16 +85,19 @@ export default class ConsoleLog extends React.Component {
     var ret
     switch (level) {
       case 'error':
-        ret = 0
+        ret = 4
+        break
+      case 'success':
+        ret = 3
         break
       case 'warning':
-        ret = 1
-        break
-      case 'info':
         ret = 2
         break
+      case 'info':
+        ret = 1
+        break
       default:
-        ret = 3
+        ret = 0
     }
     return ret
   }
@@ -123,6 +136,7 @@ export default class ConsoleLog extends React.Component {
         message: message
       })
       this.props.logModified({ logId: this.props.logId })
+      this.growBtn()
       resolve()
     })
   }
@@ -133,6 +147,10 @@ export default class ConsoleLog extends React.Component {
 
   warn = ({ direction, timestampMicros, message }) => {
     return this.log({ level: 'warning', direction: direction, timestampMicros: timestampMicros, message: message })
+  }
+
+  success = ({ direction, timestampMicros, message }) => {
+    return this.log({ level: 'success', direction: direction, timestampMicros: timestampMicros, message: message })
   }
 
   err = ({ direction, timestampMicros, message }) => {
@@ -148,5 +166,11 @@ export default class ConsoleLog extends React.Component {
   counter = () => {
     this.cntr = ++this.cntr > 999 ? 0 : this.cntr
     return this.cntr
+  }
+
+  growBtn = () => {
+    let btn = document.querySelector('.react-appconsole-appConsoleToggle-icon')
+    btn.classList.add('react-appconsole-grow')
+    setTimeout(() => btn.classList.remove('react-appconsole-grow'), 300)
   }
 }
